@@ -192,19 +192,35 @@ final class LoginViewModelTests: TestCase {
     self.onePasswordButtonIsHidden.assertValues([true])
   }
 
-  func testOnePasswordButtonHidesBasedOnPasswordAutofillAvailabilityInIOS12AndPlus() {
-    self.vm.inputs.viewWillAppear()
-    self.vm.inputs.onePassword(isAvailable: true)
+  func testOnePasswordButtonHidesProperly_OnIOS11AndEarlier() {
+    let isIOS12Available = { false }
+    withEnvironment(isIOS12Available: isIOS12Available) {
+      self.vm.inputs.onePassword(isAvailable: true)
 
-    if #available(iOS 12, *) {
-      self.onePasswordButtonIsHidden.assertValues([true])
-    } else {
       self.onePasswordButtonIsHidden.assertValues([false])
+
+      self.vm.inputs.onePassword(isAvailable: false)
+
+      self.onePasswordButtonIsHidden.assertValues([false, true])
+    }
+  }
+
+  func testOnePasswordButtonHidesProperly_OnIOS12AndLater() {
+    let isIOS12Available = { true }
+    withEnvironment(isIOS12Available: isIOS12Available) {
+      self.vm.inputs.onePassword(isAvailable: true)
+
+      self.onePasswordButtonIsHidden.assertValues([true])
+
+      self.vm.inputs.onePassword(isAvailable: false)
+
+      self.onePasswordButtonIsHidden.assertValues([true, true])
     }
   }
 
   func testOnePasswordFlow() {
-    guard #available(iOS 12, *) else {
+    let isIOS12Available = { false }
+    withEnvironment(isIOS12Available: isIOS12Available) {
       self.vm.inputs.viewWillAppear()
       self.vm.inputs.onePassword(isAvailable: true)
 
@@ -240,8 +256,6 @@ final class LoginViewModelTests: TestCase {
 
       self.showError.assertValueCount(0, "Error did not happen")
       self.tfaChallenge.assertValueCount(0, "TFA challenge did not happen")
-
-      return
     }
   }
 

@@ -156,9 +156,14 @@ public func countdownProducer(to date: Date)
 }
 
 internal func is1PasswordButtonHidden(_ isHidden: Bool) -> Bool {
-  if #available(iOS 12, *) {
+  if AppEnvironment.current.isIOS12Available() {
     return true
   } else {
     return isHidden
   }
+}
+
+public func ksr_isIOS12Available() -> Bool {
+  guard #available(iOS 12, *) else { return false }
+  return true
 }

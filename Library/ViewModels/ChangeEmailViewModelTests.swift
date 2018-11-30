@@ -94,21 +94,33 @@ final class ChangeEmailViewModelTests: TestCase {
     }
   }
 
-  func testOnePasswordButtonHidesIfNotAvailable() {
+  func testOnePasswordButtonHidesProperly_OnIOS11AndEarlier() {
     self.vm.inputs.viewDidLoad()
-    self.vm.inputs.onePassword(isAvailable: false)
 
-    self.onePasswordButtonIsHidden.assertValues([true])
+    let isIOS12Available = { false }
+    withEnvironment(isIOS12Available: isIOS12Available) {
+      self.vm.inputs.onePassword(isAvailable: true)
+
+      self.onePasswordButtonIsHidden.assertValues([false])
+
+      self.vm.inputs.onePassword(isAvailable: false)
+
+      self.onePasswordButtonIsHidden.assertValues([false, true])
+    }
   }
 
-  func testOnePasswordButtonHidesBasedOnPasswordAutofillAvailabilityInIOS12AndPlus() {
+  func testOnePasswordButtonHidesProperly_OnIOS12AndLater() {
     self.vm.inputs.viewDidLoad()
-    self.vm.inputs.onePassword(isAvailable: true)
 
-    if #available(iOS 12, *) {
+    let isIOS12Available = { true }
+    withEnvironment(isIOS12Available: isIOS12Available) {
+      self.vm.inputs.onePassword(isAvailable: true)
+
       self.onePasswordButtonIsHidden.assertValues([true])
-    } else {
-      self.onePasswordButtonIsHidden.assertValues([false])
+
+      self.vm.inputs.onePassword(isAvailable: false)
+
+      self.onePasswordButtonIsHidden.assertValues([true, true])
     }
   }
 

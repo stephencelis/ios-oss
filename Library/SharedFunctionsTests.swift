@@ -163,10 +163,14 @@ final class SharedFunctionsTests: TestCase {
   }
 
   func testOnePasswordButtonIsHidden() {
-    if #available(iOS 12, *) {
+    var isIOS12Available = { true }
+    withEnvironment(isIOS12Available: isIOS12Available) {
       XCTAssertTrue(is1PasswordButtonHidden(true))
       XCTAssertTrue(is1PasswordButtonHidden(false))
-    } else {
+    }
+
+    isIOS12Available = { false }
+    withEnvironment(isIOS12Available: isIOS12Available) {
       XCTAssertTrue(is1PasswordButtonHidden(true))
       XCTAssertFalse(is1PasswordButtonHidden(false))
     }

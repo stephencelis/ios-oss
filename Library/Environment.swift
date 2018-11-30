@@ -49,6 +49,9 @@ public struct Environment {
   /// A delegate to handle Facebook initialization and incoming url requests
   public let facebookAppDelegate: FacebookAppDelegateProtocol
 
+  /// A function that returns whether iOS 12 is available
+  public let isIOS12Available: () -> Bool
+
   /// A function that returns whether voice over mode is running.
   public let isVoiceOverRunning: () -> Bool
 
@@ -98,6 +101,7 @@ public struct Environment {
     debounceInterval: DispatchTimeInterval = .milliseconds(300),
     device: UIDeviceType = UIDevice.current,
     facebookAppDelegate: FacebookAppDelegateProtocol = FBSDKApplicationDelegate.sharedInstance(),
+    isIOS12Available: @escaping () -> Bool = { ksr_isIOS12Available() },
     isVoiceOverRunning: @escaping () -> Bool = { UIAccessibility.isVoiceOverRunning },
     koala: Koala = Koala(client: KoalaTrackingClient(endpoint: .production)),
     language: Language = Language(languageStrings: Locale.preferredLanguages) ?? Language.en,
@@ -123,6 +127,7 @@ public struct Environment {
     self.debounceInterval = debounceInterval
     self.device = device
     self.facebookAppDelegate = facebookAppDelegate
+    self.isIOS12Available = isIOS12Available
     self.isVoiceOverRunning = isVoiceOverRunning
     self.koala = koala
     self.language = language
